@@ -1,24 +1,27 @@
 package main
 
-import (
-	"github.com/golang-book/distributed-systems/editor/components"
-	"github.com/gopherjs/vecty"
-	"github.com/gopherjs/vecty/elem"
-)
-
-type Main struct {
-	vecty.Core
-}
-
-func (m *Main) Render() *vecty.HTML {
-	return elem.Body(
-		vecty.Text("Hello World"),
-		new(components.Workspace),
-	)
-}
+import "github.com/gopherjs/gopherjs/js"
 
 func main() {
-	vecty.SetTitle("editor")
-	vecty.AddStylesheet("https://fontlibrary.org/face/go-mono")
-	vecty.RenderBody(new(Main))
+	js.Global.Get("document").Call("write", `
+
+<div id="container" style="width:800px;height:600px;border:1px solid grey"></div>
+
+<script src="./assets/vs/loader.js"></script>
+<script>
+	require.config({ paths: { 'vs': 'assets/vs' }});
+	require(['vs/editor/editor.main'], function() {
+		var editor = monaco.editor.create(document.getElementById('container'), {
+			fontFamily: "Go Mono",
+			fontSize: 16,
+			lineNumbers: false,
+			value: [
+				'func factorial(x int) {',
+				'\treturn 0',
+				'}'
+			].join('\n'),
+			language: 'go'
+		});
+	});
+</script>`)
 }
