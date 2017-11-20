@@ -12,7 +12,10 @@ import (
 func main() {
 	log.SetFlags(0)
 
-	li := jsnet.Listen()
+	li, err := jsnet.Listen(1)
+	if err != nil {
+		log.Fatal(err)
+	}
 	for {
 		conn, err := li.Accept()
 		if err != nil {
@@ -31,5 +34,4 @@ func handle(li net.Listener, conn net.Conn) {
 		io.WriteString(conn, "Hello World\n")
 		break
 	}
-
 }
